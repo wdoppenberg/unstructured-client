@@ -1,0 +1,66 @@
+name: Publish Package
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build-and-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    name: Test multiple workspaces on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CARGO_TERM_COLOR: always
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/unstructured-cli
+            crates/unstructured-client
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Check formatting
+        run: cargo fmt -- --check
+
+      - name: Check clippy
+        run: cargo clippy -- -D warnings
+
+      - name: Publish dry-run
+        run: cargo publish -p unstructured-client --dry-run
+
+      - name: Run tests
+        run: cargo test --verbose
+
+
+  publish:
+    runs-on: ubuntu-20.04
+    needs: [ build-and-test ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check current version
+        id: check-version
+        run: |
+          LAST_PUBLISHED_VERSION=$(cargo search unstructured-client --limit 1 | awk '{print $3}' | tr -d '"')
+          LOCAL_VERSION=$(grep -e '^version\s*=\s*"' Cargo.toml | head -1 | cut -d '"' -f2)
+          if [ "$LAST_PUBLISHED_VERSION" == "$LOCAL_VERSION" ]; then
+            exit 1 # Force a failure if the versions match
+          fi
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            crates/unstructured-client
+            crates/unstructured-cli
+
+      - name: Publish unstructured-client
+        run: cargo publish -p unstructured-client --token ${{ secrets.CRATES_TOKEN }}
