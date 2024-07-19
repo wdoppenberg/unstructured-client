@@ -28,7 +28,6 @@ impl UnstructuredClient {
         file_path: &Path,
         params: PartitionParameters,
     ) -> Result<ElementList> {
-        // let url = format!("http://{}/general/v0/general", self.base_url);
         let url = self.base_url.join("/general/v0/general")?;
 
         let file = fs::read(file_path)?;
