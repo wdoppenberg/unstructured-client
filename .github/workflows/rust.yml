@@ -37,8 +37,8 @@ jobs:
     - uses: Swatinem/rust-cache@v2
       with:
         workspaces: |
-          crates/glowrs
-          crates/glowrs-server
+          crates/unstructured-client
+          crates/unstructured-cli
 
     - name: Build
       run: cargo build --verbose
@@ -50,7 +50,7 @@ jobs:
       run: cargo clippy -- -D warnings
 
     - name: Publish dry-run
-      run: cargo publish -p glowrs --dry-run
+      run: cargo publish -p unstructured-client --dry-run
 
     - name: Run tests
       run: cargo test --verbose
