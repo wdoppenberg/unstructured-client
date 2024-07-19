@@ -52,6 +52,9 @@ jobs:
         run: |
           LAST_PUBLISHED_VERSION=$(cargo search unstructured-client --limit 1 | awk '{print $3}' | tr -d '"')
           LOCAL_VERSION=$(grep -e '^version\s*=\s*"' Cargo.toml | head -1 | cut -d '"' -f2)
+          if [ -z "$LAST_PUBLISHED_VERSION" ]; then
+            exit 0
+          fi
           if [ "$LAST_PUBLISHED_VERSION" == "$LOCAL_VERSION" ]; then
             exit 1 # Force a failure if the versions match
           fi
