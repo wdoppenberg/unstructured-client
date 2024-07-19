@@ -1,6 +1,6 @@
 # Unofficial Unstructured Rust client library and CLI
 
-<p align="center;">
+<p align="center">
   <img width="250" height="250" src="static/logo.png" alt="Library logo">
 </p>
 
