@@ -1,7 +1,7 @@
 # Unofficial Unstructured Rust client library and CLI
 
-<p style="text-align:center;">
-  <img width="250" height="250" src="static/unstructured_logo.png" alt="Library logo">
+<p align="center;">
+  <img width="250" height="250" src="static/logo.png" alt="Library logo">
 </p>
 
 Use [Unstructured](https://docs.unstructured.io/welcome)'s API service with this light client library for Rust. 
