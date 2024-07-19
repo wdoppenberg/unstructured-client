@@ -6,9 +6,6 @@ use std::path::Path;
 use crate::partition::{ElementList, PartitionParameters};
 
 #[derive(Debug, Clone)]
-struct RetryConfig {}
-
-#[derive(Debug, Clone)]
 pub struct UnstructuredClient {
     client: reqwest::Client,
     base_url: Url,
