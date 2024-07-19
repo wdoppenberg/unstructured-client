@@ -1,10 +1,10 @@
 mod args;
 
-use clap::{Parser};
+use anyhow::Result;
+use clap::Parser;
 use reqwest::Url;
 use std::path::PathBuf;
 use std::process::ExitCode;
-use anyhow::Result;
 
 use unstructured_client::{PartitionParameters, UnstructuredClient};
 
@@ -19,12 +19,12 @@ pub struct AppArgs {
     #[clap(long, default_value = "http://localhost:8000")]
     pub base_url: Url,
     #[clap(flatten)]
-    partition_parameters: CliPartitionParameters
+    partition_parameters: CliPartitionParameters,
 }
 
 #[tokio::main]
 async fn main() -> Result<ExitCode> {
-    // Define CLI arguments using clap
+    // Parse CLI Arguments
     let app_args = AppArgs::parse();
 
     // Create an instance of UnstructuredClient
