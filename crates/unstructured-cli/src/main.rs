@@ -5,7 +5,6 @@ use clap::Parser;
 use reqwest::Url;
 use serde_json::to_string;
 use std::path::PathBuf;
-use std::process::ExitCode;
 
 use crate::args::CliPartitionParameters;
 use crate::error::CliError;
@@ -24,7 +23,7 @@ pub struct AppArgs {
 }
 
 #[tokio::main]
-async fn main() -> Result<ExitCode, CliError> {
+async fn main() -> Result<(), CliError> {
     // Parse CLI Arguments
     let app_args = AppArgs::parse();
 
@@ -35,10 +34,10 @@ async fn main() -> Result<ExitCode, CliError> {
     let params = PartitionParameters::from(app_args.partition_parameters);
 
     // Make the API request
-    match client.partition_file(&app_args.file_path, params).await {
-        Ok(response) => println!("{}", to_string(&response)?),
-        Err(error) => eprintln!("Error: {:?}", error),
-    }
+    let element_list = client.partition_file(&app_args.file_path, params).await?;
 
-    Ok(ExitCode::SUCCESS)
+    // Print the output
+    println!("{}", to_string(&element_list)?);
+
+    Ok(())
 }
