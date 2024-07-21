@@ -8,6 +8,8 @@ members = [
 
 [workspace.dependencies]
 tokio = { version = "1.38.1", features = ["full"] }
+tracing = "0.1"
+thiserror = "1.0.63"
 
 [workspace.package]
 license = "Apache-2.0"

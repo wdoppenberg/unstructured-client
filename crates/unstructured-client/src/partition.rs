@@ -1,3 +1,4 @@
+use reqwest::multipart::Form;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -77,6 +78,75 @@ impl Default for PartitionParameters {
     }
 }
 
+impl From<PartitionParameters> for Form {
+    fn from(value: PartitionParameters) -> Self {
+        Form::new()
+            .text("coordinates", value.coordinates.to_string())
+            .text(
+                "encoding",
+                value
+                    .encoding
+                    .clone()
+                    .unwrap_or_else(|| "utf-8".to_string()),
+            )
+            .text(
+                "extract_image_block_types",
+                serde_json::to_string(&value.extract_image_block_types).unwrap(),
+            )
+            .text(
+                "gz_uncompressed_content_type",
+                value
+                    .gz_uncompressed_content_type
+                    .clone()
+                    .unwrap_or_default(),
+            )
+            .text(
+                "hi_res_model_name",
+                value.hi_res_model_name.clone().unwrap_or_default(),
+            )
+            .text("include_page_breaks", value.include_page_breaks.to_string())
+            .text(
+                "languages",
+                serde_json::to_string(&value.languages).unwrap(),
+            )
+            .text("output_format", value.output_format.clone())
+            .text(
+                "skip_infer_table_types",
+                serde_json::to_string(&value.skip_infer_table_types).unwrap(),
+            )
+            .text(
+                "starting_page_number",
+                value.starting_page_number.unwrap_or_default().to_string(),
+            )
+            .text("strategy", value.strategy.clone())
+            .text("unique_element_ids", value.unique_element_ids.to_string())
+            .text("xml_keep_tags", value.xml_keep_tags.to_string())
+            .text(
+                "chunking_strategy",
+                value.chunking_strategy.clone().unwrap_or_default(),
+            )
+            .text(
+                "combine_under_n_chars",
+                value.combine_under_n_chars.unwrap_or_default().to_string(),
+            )
+            .text(
+                "include_orig_elements",
+                value.include_orig_elements.to_string(),
+            )
+            .text(
+                "max_characters",
+                value.max_characters.unwrap_or_default().to_string(),
+            )
+            .text("multipage_sections", value.multipage_sections.to_string())
+            .text(
+                "new_after_n_chars",
+                value.new_after_n_chars.unwrap_or_default().to_string(),
+            )
+            .text("overlap", value.overlap.to_string())
+            .text("overlap_all", value.overlap_all.to_string())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::partition::PartitionParameters;
@@ -88,7 +158,7 @@ mod tests {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Element {
     pub r#type: String,
     pub element_id: String,
