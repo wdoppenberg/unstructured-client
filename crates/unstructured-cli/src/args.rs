@@ -1,5 +1,5 @@
 use clap::Parser;
-use unstructured_client::PartitionParameters;
+use unstructured_client::partition::{PartitionParameters, Strategy};
 
 #[derive(Debug, Parser)]
 pub struct CliPartitionParameters {
@@ -101,14 +101,16 @@ impl From<CliPartitionParameters> for PartitionParameters {
             gz_uncompressed_content_type: cli_params.gz_uncompressed_content_type,
             hi_res_model_name: cli_params.hi_res_model_name,
             include_page_breaks: cli_params.include_page_breaks,
-            languages: cli_params.languages,
+            languages: Some(cli_params.languages),
             output_format: cli_params.output_format,
             skip_infer_table_types: cli_params.skip_infer_table_types,
             starting_page_number: cli_params.starting_page_number,
-            strategy: cli_params.strategy,
+            // TODO: Parse
+            strategy: Strategy::Auto,
             unique_element_ids: cli_params.unique_element_ids,
             xml_keep_tags: cli_params.xml_keep_tags,
-            chunking_strategy: cli_params.chunking_strategy,
+            // TODO: Parse
+            chunking_strategy: None,
             combine_under_n_chars: cli_params.combine_under_n_chars,
             include_orig_elements: cli_params.include_orig_elements,
             max_characters: cli_params.max_characters,

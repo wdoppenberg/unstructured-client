@@ -1,17 +1,3 @@
-# Unofficial Unstructured Rust client library
-
-Use [Unstructured](https://docs.unstructured.io/welcome)'s API service with this light client library for Rust. 
-
-
-## Usage example
-
-Either use their platform offering, or spin up an Unstructured API service locally:
-
-```bash
-docker run -p 8000:8000 -it downloads.unstructured.io/unstructured-io/unstructured-api:latest
-```
-
-```rust
 use unstructured_client::{error::Result, PartitionParameters, UnstructuredClient};
 
 #[tokio::main]
@@ -34,8 +20,3 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
-```
-
-Check out [`partition.rs`](src/partition.rs) for the partition arguments.
-
-

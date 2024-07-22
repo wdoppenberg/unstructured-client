@@ -12,6 +12,9 @@ pub enum ClientError {
     #[error("Text extraction failed: {0}")]
     ExtractionFailed(String),
 
+    #[error("Metadata field not present: {0}")]
+    MetadataFieldNotPresent(String),
+
     #[error("Unauthorized access: {0}")]
     Unauthorized(String),
 
