@@ -59,7 +59,7 @@ pub struct CommonMetadata {
 
 /// Metadata for DOCX, PDF, PPT, XLSX document types.
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub struct OfficeFileMetadata {
+pub struct PagedDocument {
     #[serde(flatten)]
     pub common: CommonMetadata,
 
@@ -148,13 +148,13 @@ pub struct EpubMetadata {
 pub enum ExtendedMetadata {
     // For DOCX, PDF, PPT, XLSX
     #[serde(rename = "application/pdf")]
-    PdfPage(OfficeFileMetadata),
+    PdfPage(PagedDocument),
 
     #[serde(rename = "application/vnd.openxmlformats-officedocument.wordprocessingml.document")]
-    DocxPage(OfficeFileMetadata),
+    DocxPage(PagedDocument),
 
     #[serde(rename = "application/vnd.openxmlformats-officedocument.presentationml.presentation")]
-    PptPage(OfficeFileMetadata),
+    PptPage(PagedDocument),
 
     #[serde(
         rename = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -250,21 +250,21 @@ mod tests {
         let known_formats = vec![
             (
                 "application/pdf",
-                ExtendedMetadata::PdfPage(OfficeFileMetadata {
+                ExtendedMetadata::PdfPage(PagedDocument {
                     common: CommonMetadata::default(),
                     page_number: None,
                 }),
             ),
             (
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                ExtendedMetadata::DocxPage(OfficeFileMetadata {
+                ExtendedMetadata::DocxPage(PagedDocument {
                     common: CommonMetadata::default(),
                     page_number: None,
                 }),
             ),
             (
                 "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                ExtendedMetadata::PptPage(OfficeFileMetadata {
+                ExtendedMetadata::PptPage(PagedDocument {
                     common: CommonMetadata::default(),
                     page_number: None,
                 }),
