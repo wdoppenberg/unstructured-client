@@ -201,14 +201,31 @@ impl From<PartitionParameters> for Form {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(untagged)]
+pub enum LocElement {
+    Str(String),
+    Int(i64),
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct ValidationError {
+    pub loc: Vec<LocElement>,
+    pub msg: String,
+    pub r#type: String,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(untagged)]
 pub enum PartitionResponse {
     /// Successful response; returns a list of elements.
     Success(ElementList),
 
+    /// Failed to validate value
+    ValidationFailure(ValidationError),
+
     /// Failed request; returns JSON with error message.
-    Failure(serde_json::Value),
+    UnknownFailure(serde_json::Value),
 }
 
 #[cfg(test)]

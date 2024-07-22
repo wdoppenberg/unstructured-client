@@ -42,7 +42,7 @@ async fn main() -> Result<(), CliError> {
         PartitionResponse::Success(element_list) => {
             println!("{}", to_string(&element_list)?);
         }
-        PartitionResponse::Failure(value) => {
+        value => {
             eprintln!("{}", to_string(&value)?);
         }
     }
