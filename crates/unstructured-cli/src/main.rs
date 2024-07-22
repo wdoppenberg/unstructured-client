@@ -1,14 +1,14 @@
 mod args;
+mod error;
 
-use anyhow::Result;
 use clap::Parser;
 use reqwest::Url;
+use serde_json::to_string;
 use std::path::PathBuf;
-use std::process::ExitCode;
-
-use unstructured_client::{PartitionParameters, UnstructuredClient};
 
 use crate::args::CliPartitionParameters;
+use crate::error::CliError;
+use unstructured_client::{PartitionParameters, UnstructuredClient};
 
 #[derive(Debug, Parser)]
 pub struct AppArgs {
@@ -23,21 +23,21 @@ pub struct AppArgs {
 }
 
 #[tokio::main]
-async fn main() -> Result<ExitCode> {
+async fn main() -> Result<(), CliError> {
     // Parse CLI Arguments
     let app_args = AppArgs::parse();
 
     // Create an instance of UnstructuredClient
-    let client = UnstructuredClient::new(app_args.base_url);
+    let client = UnstructuredClient::new(app_args.base_url.as_ref())?;
 
     // Define partition parameters
     let params = PartitionParameters::from(app_args.partition_parameters);
 
     // Make the API request
-    match client.partition_file(&app_args.file_path, params).await {
-        Ok(response) => println!("{:?}", response),
-        Err(error) => eprintln!("Error: {:?}", error),
-    }
+    let element_list = client.partition_file(&app_args.file_path, params).await?;
 
-    Ok(ExitCode::SUCCESS)
+    // Print the output
+    println!("{}", to_string(&element_list)?);
+
+    Ok(())
 }
