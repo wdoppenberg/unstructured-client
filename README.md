@@ -16,27 +16,29 @@ docker run -p 8000:8000 -it downloads.unstructured.io/unstructured-io/unstructur
 ```
 
 ```rust
-use unstructured_client::{PartitionParameters, UnstructuredClient, error::Result};
+use unstructured_client::{error::Result, PartitionParameters, UnstructuredClient};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-	// Specify file path
-	let file_path = std::path::PathBuf::from("crates/unstructured-cli/tests/fixtures/sample-pdf.pdf");
-	
-	// Create an instance of UnstructuredClient
-	let client = UnstructuredClient::new("http://localhost:8765")?;
+    // Specify file path
+    let file_path =
+        std::path::PathBuf::from("crates/unstructured-cli/tests/fixtures/sample-pdf.pdf");
 
-	// Define partition parameters
-	let params = PartitionParameters::default();
+    // Create an instance of UnstructuredClient
+    let client = UnstructuredClient::new("http://localhost:8765")?;
 
-	// Make the API request
-	match client.partition_file(&file_path, params).await {
-		Ok(element_list) => println!("{:#?}", element_list),
-		Err(error) => eprintln!("Error: {:#?}", error),
-	}
+    // Define partition parameters
+    let params = PartitionParameters::default();
 
-	Ok(())
+    // Make the API request
+    match client.partition_file(&file_path, params).await {
+        Ok(element_list) => println!("{:#?}", element_list),
+        Err(error) => eprintln!("Error: {:#?}", error),
+    }
+
+    Ok(())
 }
+
 ```
 
 Check out [`partition.rs`](crates/unstructured-client/src/partition.rs) for the partition arguments
