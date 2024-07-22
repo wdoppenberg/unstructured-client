@@ -139,7 +139,7 @@ impl UnstructuredClient {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::partition::PartitionResponse::{Failure, Success};
+    use crate::partition::PartitionResponse::Success;
     use mockito::Matcher;
     use std::io::Write;
     use tempfile::NamedTempFile;
@@ -203,7 +203,7 @@ mod tests {
             Success(element_list) => {
                 assert_eq!(element_list.len(), 3);
             }
-            Failure(e) => {
+            e => {
                 panic!("Test failed with error: {:?}", e);
             }
         }

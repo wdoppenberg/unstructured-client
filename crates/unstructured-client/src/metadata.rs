@@ -219,11 +219,12 @@ impl From<Metadata> for CommonMetadata {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::error::Error;
+    use crate::error::Result;
+
     fn test_metadata_for_mime_type(
         mime_type: &str,
         expected_format: ExtendedMetadata,
-    ) -> Result<(), Box<dyn Error>> {
+    ) -> Result<()> {
         let json_str = r#"
 		{
 	        "filetype": "<REPLACE>"
@@ -232,7 +233,7 @@ mod tests {
         let json_str = json_str.replace("<REPLACE>", mime_type);
 
         // Deserialize the JSON into the DocumentMetadata enum
-        let metadata: Metadata = serde_json::from_str(&json_str)?;
+        let metadata: Metadata = serde_json::from_str(&json_str).unwrap();
 
         // Verify deserialization
         match metadata {
@@ -246,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn test_all_known_formats() -> Result<(), Box<dyn Error>> {
+    fn test_all_known_formats() -> Result<()> {
         let known_formats = vec![
             (
                 "application/pdf",
@@ -325,7 +326,7 @@ mod tests {
         Ok(())
     }
     #[test]
-    fn test_pdf_element() -> Result<(), Box<dyn Error>> {
+    fn test_pdf_element() -> Result<()> {
         // Example JSON string
         let json_str = r#"
     {
@@ -347,7 +348,7 @@ mod tests {
     "#;
 
         // Deserialize the JSON into the DocumentMetadata enum
-        let metadata: Metadata = serde_json::from_str(json_str)?;
+        let metadata: Metadata = serde_json::from_str(json_str).unwrap();
 
         // Verify deserialization
         match metadata {
@@ -362,7 +363,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unknown_element() -> Result<(), Box<dyn Error>> {
+    fn test_unknown_element() -> Result<()> {
         // Example JSON string
         let json_str = r#"
     {
@@ -374,7 +375,7 @@ mod tests {
     "#;
 
         // Deserialize the JSON into the DocumentMetadata enum
-        let metadata: Metadata = serde_json::from_str(json_str)?;
+        let metadata: Metadata = serde_json::from_str(json_str).unwrap();
 
         // Verify deserialization
         match metadata {
