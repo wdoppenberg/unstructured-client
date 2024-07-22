@@ -4,7 +4,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::error::{ClientError, Result};
-use crate::partition::{ElementList, PartitionParameters};
+use crate::partition::{PartitionParameters, PartitionResponse};
 
 /// Current crate version
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -85,7 +85,7 @@ impl UnstructuredClient {
         &self,
         file_path: &Path,
         params: PartitionParameters,
-    ) -> Result<ElementList> {
+    ) -> Result<PartitionResponse> {
         let url = self
             .base_url
             .join(API_ROUTE)
@@ -118,10 +118,9 @@ impl UnstructuredClient {
             .post(url)
             .multipart(form)
             .header("Content-Type", "multipart/form-data")
-            // TODO: Add API key
-            //
             .header("User-Agent", format!("Unstructured-Rust-Client/{VERSION}"));
 
+        // Add api key
         let request = {
             match &self.api_key {
                 None => request,
@@ -129,17 +128,18 @@ impl UnstructuredClient {
             }
         };
 
+        // Process response
         let response = request.send().await?;
+        let element_list = response.json().await?;
 
-        let partition_response = response.json::<ElementList>().await?;
-        Ok(partition_response)
+        Ok(element_list)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::partition::PartitionParameters;
+    use crate::partition::PartitionResponse::{Failure, Success};
     use mockito::Matcher;
     use std::io::Write;
     use tempfile::NamedTempFile;
@@ -164,23 +164,22 @@ mod tests {
                 r#"
 		        [
 		            {
-		                "type": "paragraph",
+		                "type": "NarrativeText",
 		                "element_id": "1",
 		                "text": "This is a test paragraph.",
 		                "metadata": null
 		            },
 		            {
-		                "type": "paragraph",
+		                "type": "NarrativeText",
 		                "element_id": "1",
 		                "text": "This is a test paragraph."
 		            },
 		            {
-		                "type": "image",
+		                "type": "Image",
 		                "element_id": "2",
 		                "text": "base64encodedstring",
 		                "metadata": {
-		                    "width": 800,
-		                    "height": 600
+		                    "filename": "image.jpg"
 		                }
 		            }
 		        ]
@@ -197,14 +196,14 @@ mod tests {
         let params = PartitionParameters::default(); // Adjust with actual defaults
 
         // Call the function
-        let result = client.partition_file(temp_file.path(), params).await;
+        let result = client.partition_file(temp_file.path(), params).await?;
 
         // Ensure the result is OK and matches expected structure
         match result {
-            Ok(element_list) => {
+            Success(element_list) => {
                 assert_eq!(element_list.len(), 3);
             }
-            Err(e) => {
+            Failure(e) => {
                 panic!("Test failed with error: {:?}", e);
             }
         }

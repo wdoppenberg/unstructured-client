@@ -8,6 +8,7 @@ use std::path::PathBuf;
 
 use crate::args::CliPartitionParameters;
 use crate::error::CliError;
+use unstructured_client::partition::PartitionResponse;
 use unstructured_client::{PartitionParameters, UnstructuredClient};
 
 #[derive(Debug, Parser)]
@@ -34,10 +35,17 @@ async fn main() -> Result<(), CliError> {
     let params = PartitionParameters::from(app_args.partition_parameters);
 
     // Make the API request
-    let element_list = client.partition_file(&app_args.file_path, params).await?;
+    let partition_response = client.partition_file(&app_args.file_path, params).await?;
 
     // Print the output
-    println!("{}", to_string(&element_list)?);
+    match partition_response {
+        PartitionResponse::Success(element_list) => {
+            println!("{}", to_string(&element_list)?);
+        }
+        PartitionResponse::Failure(value) => {
+            eprintln!("{}", to_string(&value)?);
+        }
+    }
 
     Ok(())
 }

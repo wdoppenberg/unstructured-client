@@ -16,21 +16,23 @@ docker run -p 8000:8000 -it downloads.unstructured.io/unstructured-io/unstructur
 ```
 
 ```rust
-use unstructured_client::{PartitionParameters, UnstructuredClient};
+use unstructured_client::{PartitionParameters, UnstructuredClient, error::Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-	let file_path = std::path::PathBuf::from("/path/to/file.pdf");
+	// Specify file path
+	let file_path = std::path::PathBuf::from("crates/unstructured-cli/tests/fixtures/sample-pdf.pdf");
+	
 	// Create an instance of UnstructuredClient
-	let client = UnstructuredClient::new("http://localhost:8000");
+	let client = UnstructuredClient::new("http://localhost:8765")?;
 
 	// Define partition parameters
 	let params = PartitionParameters::default();
 
 	// Make the API request
 	match client.partition_file(&file_path, params).await {
-		Ok(element_list) => println!("{:?}", element_list),
-		Err(error) => eprintln!("Error: {:?}", error),
+		Ok(element_list) => println!("{:#?}", element_list),
+		Err(error) => eprintln!("Error: {:#?}", error),
 	}
 
 	Ok(())
